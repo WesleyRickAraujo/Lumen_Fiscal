@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumen Fiscal | Inteligência de Comando B2B</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-pure: #000000;
+            --bg-card: #0A0A0A;
+            --bg-card-hover: #121212;
+            --lumen-cyan: #06b6d4;
+            --lumen-cyan-dim: rgba(6, 182, 212, 0.15);
+            --lumen-cyan-glow: rgba(6, 182, 212, 0.08);
+            --text-main: #FFFFFF;
+            --text-dim: #A1A1AA;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --accent-red: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-pure);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+        }
+
+        /* --- Background Neon Lines (SVG) --- */
+        #neon-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .neon-line {
+            fill: none;
+            stroke: var(--lumen-cyan);
+            stroke-width: 0.5;
+            filter: drop-shadow(0 0 5px var(--lumen-cyan));
+        }
+
+        /* --- Layout & Container --- */
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        section {
+            padding: 4rem 0; 
+            position: relative;
+        }
+
+        /* --- Bento Grid System --- */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .bento-grid {
+                grid-template-columns: repeat(12, 1fr);
+                grid-template-rows: repeat(2, auto);
+            }
+        }
+
+        /* --- Glow Tracking Component --- */
+        .bento-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: border-color 0.3s ease, transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            --mouse-x: 50%;
+            --mouse-y: 50%;
+        }
+
+        .bento-item > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        @media (pointer: fine) {
+            .bento-item::before {
+                content: "";
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: radial-gradient(
+                    circle 300px at var(--mouse-x) var(--mouse-y), 
+                    var(--lumen-cyan-glow), 
+                    transparent 80%
+                );
+                opacity: 0;
+                transition: opacity 0.5s ease;
+                z-index: 1;
+                pointer-events: none;
+            }
+
+            .bento-item:hover::before {
+                opacity: 1;
+            }
+
+            .bento-item:hover {
+                border-color: var(--lumen-cyan-dim);
+                background: var(--bg-card-hover);
+            }
+        }
+
+        /* --- UI Components --- */
+        .label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--lumen-cyan);
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .magnetic-wrapper {
+            display: inline-block;
+            padding: 20px;
+            margin: -20px;
+            width: calc(100% + 40px);
+        }
+
+        .btn-primary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--lumen-cyan);
+            color: var(--bg-pure);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-decoration: none;
+            font-size: 13px;
+            width: 100%;
+            transition: background 0.3s ease, transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 0 rgba(6, 182, 212, 0);
+        }
+
+        @media (pointer: fine) {
+            .btn-primary:hover {
+                filter: brightness(1.1);
+                box-shadow: 0 10px 25px rgba(6, 182, 212, 0.2);
+            }
+        }
+
+        /* --- Sistema de Imagens (Com Luz de Fundo Integrada) --- */
+        .mockup-wrapper {
+            /* Alterado de #000 para um gradiente radial iluminado */
+            background: radial-gradient(circle at center, rgba(6, 182, 212, 0.2) 0%, rgba(0, 0, 0, 1) 75%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            width: 100%;
+            aspect-ratio: 16/9; /* Proporção base */
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem; /* Padding mantido para garantir respiro nas bordas */
+        }
+
+        .mockup-bg {
+            width: 100%;
+            height: 100%;
+            background-size: contain; /* Garante que 100% da imagem seja visível */
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 1;
+            /* Leve sombra na imagem em si para destacar da luz de fundo */
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+        }
+
+        .mockup-text {
+            position: relative;
+            z-index: 2;
+            color: var(--text-main);
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 600;
+            background: rgba(0,0,0,0.5);
+            padding: 8px 16px;
+            border-radius: 4px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* --- Composição Hero (Médica + Notificações) --- */
+        .hero-composition {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            margin: 3rem auto 5rem; 
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding: 0 1rem;
+        }
+
+        .hero-image-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 650px; 
+            display: flex;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .hero-glow {
+            position: absolute;
+            top: 45%; 
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 130%; 
+            aspect-ratio: 1 / 1;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.25) 0%, transparent 65%);
+            border-radius: 50%;
+            z-index: 1;
+            filter: blur(25px);
+            pointer-events: none;
+        }
+
+        .hero-center-img {
+            width: 100%;
+            position: relative;
+            z-index: 2;
+            display: block;
+            object-fit: contain;
+            object-position: bottom;
+            -webkit-mask-image: linear-gradient(to bottom, black 75%, transparent 98%);
+            mask-image: linear-gradient(to bottom, black 75%, transparent 98%);
+        }
+
+        .floating-bubble {
+            position: absolute;
+            z-index: 3;
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.8));
+        }
+
+        /* Ajuste de Posição dos Balões */
+        .bubble-1 { top: 10%; left: -5%; width: 40%; }
+        .bubble-2 { top: 22%; right: -8%; width: 36%; z-index: 4; }
+        .bubble-3 { bottom: 28%; left: -22%; width: 34%; z-index: 4; }
+        .bubble-4 { bottom: 12%; right: -25%; width: 38%; z-index: 4; }
+
+        @media (max-width: 768px) {
+            .hero-composition { margin-top: 2rem; margin-bottom: 6rem; }
+            .hero-image-wrapper { max-width: 360px; }
+            .hero-glow { width: 160%; background: radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, transparent 65%); }
+            
+            .bubble-1 { top: 2%; left: -2%; width: 42%; }
+            .bubble-2 { top: 18%; right: -4%; width: 40%; }
+            .bubble-3 { bottom: 30%; left: -15%; width: 38%; z-index: 4; }
+            .bubble-4 { bottom: 10%; right: -18%; width: 42%; z-index: 4; }
+        }
+
+        .hero-cta-overlap {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, 50%); 
+            z-index: 10;
+            width: 75%; 
+            max-width: 320px; 
+            text-align: center;
+        }
+
+        /* --- Specific Section Styles --- */
+        .hero { padding-top: 6rem; text-align: center; }
+        .hero h1 { font-size: clamp(2.5rem, 10vw, 4.5rem); line-height: 0.95; margin-bottom: 1.5rem; }
+        .hero p { color: var(--text-dim); font-size: 1.1rem; max-width: 600px; margin: 0 auto 2.5rem; }
+
+        .manifesto { background: var(--bg-pure); padding: 6rem 0; text-align: left; }
+        .manifesto-text { font-size: clamp(1.5rem, 5vw, 2.5rem); font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; }
+
+        /* --- Grid Item Variations --- */
+        .item-large { grid-column: span 12; }
+        .item-medium { grid-column: span 12; }
+        .item-half { grid-column: span 12; }
+
+        @media (min-width: 768px) {
+            .item-large { grid-column: span 8; }
+            .item-medium { grid-column: span 4; }
+            .item-half { grid-column: span 6; }
+            .magnetic-wrapper { width: auto; display: inline-block; }
+            .hero .btn-primary { width: auto; }
+        }
+
+        .reveal { opacity: 0; transform: translateY(20px); }
+    </style>
+</head>
+<body>
+
+    <svg id="neon-canvas">
+        <path class="neon-line" d="M-100,200 L1200,200" />
+        <path class="neon-line" d="M200,-100 L200,1100" />
+        <path class="neon-line" d="M800,-100 L800,1100" />
+    </svg>
+
+    <header class="container" style="padding-top: 2rem;">
+        <img src="icon.svg" alt="Logótipo Lumen" style="height: 48px; width: auto; filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.3));">
+    </header>
+
+    <section class="hero container">
+        <span class="label reveal">Inteligência Fiscal B2B</span>
+        <h1 class="reveal">LUMEN <span style="color: var(--lumen-cyan)">FISCAL</span></h1>
+        <p class="reveal">
+            Transforme o caos tributário em clareza estratégica. O comando total do seu caixa na palma da sua mão.
+        </p>
+        
+        <div class="reveal hero-composition">
+            <div class="hero-image-wrapper">
+                <div class="hero-glow"></div>
+                
+                <img src="1.svg" alt="1.svg" class="floating-bubble bubble-1">
+                <img src="2.svg" alt="2.svg" class="floating-bubble bubble-2">
+                <img src="3.svg" alt="3.svg" class="floating-bubble bubble-3">
+                <img src="4.svg" alt="4.svg" class="floating-bubble bubble-4">
+                
+                <!-- Alterado para .svg -->
+                <img src="medica.svg" alt="Médica e Empreendedora Satisfeita usando Lumen Fiscal" class="hero-center-img">
+                
+                <div class="hero-cta-overlap">
+                    <div class="magnetic-wrapper">
+                        <a href="https://wa.me/SEUNUMERO" class="btn-primary magnetic-btn">Agendar uma Demonstração</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container">
+        <div class="reveal" style="margin-bottom: 2rem;">
+            <span class="label">O Ecossistema</span>
+            <h2 style="font-size: 36px; line-height: 1;">A Solução</h2>
+        </div>
+
+        <div class="bento-grid">
+            
+            <div class="bento-item item-large reveal bento-glow">
+                <div>
+                    <span class="label" style="color: var(--text-dim)">Estratégia</span>
+                    <h3 style="font-size: 24px;">Decida com Luz, não com Medo.</h3>
+                    <p style="color: var(--text-dim); margin-top: 10px; font-size: 14px; max-width: 400px;">
+                        Traduza dados complexos em decisões acionáveis. Chega de esperar o fim do mês para saber seu lucro real.
+                    </p>
+                </div>
+                <div class="mockup-wrapper" style="padding: 0; overflow: hidden;">
+                    <!-- Alterado para .svg e ocupando 100% sem padding -->
+                    <div class="mockup-bg" style="background-image: url('decidacomluz.svg'); background-size: cover; filter: none;"></div>
+                </div>
+            </div>
+
+            <div class="bento-item item-medium reveal bento-glow">
+                <div>
+                    <span class="label" style="color: var(--text-dim)">Interface</span>
+                    <h3 style="font-size: 24px;">O Financeiro no WhatsApp.</h3>
+                    <p style="color: var(--text-dim); margin-top: 10px; font-size: 14px;">
+                        Sem planilhas. Envie fotos ou arquivos e receba o veredito em minutos.
+                    </p>
+                </div>
+                <div class="mockup-wrapper" style="aspect-ratio: 9/12;">
+                    <!-- Mantido .svg -->
+                    <div class="mockup-bg" style="background-image: url('financeironowhatsapp.svg');"></div>
+                </div>
+            </div>
+
+            <div class="bento-item item-medium reveal bento-glow">
+                <div>
+                    <span class="label" style="color: var(--text-dim)">Preditivo</span>
+                    <h3 style="font-size: 24px;">Simulador de Cenários.</h3>
+                    <p style="color: var(--text-dim); margin-top: 10px; font-size: 14px;">
+                        Contratar agora ou investir? Saiba o impacto no caixa antes de assinar.
+                    </p>
+                </div>
+                <div class="mockup-wrapper" style="padding: 0; overflow: hidden;">
+                    <!-- Alterado para .svg e ocupando 100% sem padding -->
+                    <div class="mockup-bg" style="background-image: url('simuladordecenarios.svg'); background-size: cover; filter: none;"></div>
+                </div>
+            </div>
+
+            <div class="bento-item item-large reveal bento-glow" style="padding: 0; min-height: 380px; border-color: var(--lumen-cyan-dim); position: relative;">
+                
+                <!-- Alterado para .svg -->
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('acuraciatecnica.svg'); background-size: contain; background-position: right center; background-repeat: no-repeat; opacity: 0.6; z-index: 0;"></div>
+                
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, rgba(10,10,10,1) 0%, rgba(10,10,10,0.8) 50%, transparent 100%); z-index: 1;"></div>
+                
+                <div style="position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; height: 100%; padding: clamp(1.5rem, 5vw, 3rem);">
+                    <h3 id="counter-acuracia" style="font-size: clamp(48px, 8vw, 72px); line-height: 1; color: var(--lumen-cyan); text-shadow: 0 0 25px rgba(6, 182, 212, 0.3);">0%</h3>
+                    <p style="font-weight: 800; text-transform: uppercase; font-size: clamp(14px, 2vw, 18px); margin-top: 10px;">Acurácia Técnica</p>
+                    <p style="color: var(--text-dim); margin-top: 15px; font-size: 16px; max-width: 380px;">
+                        Classificação contábil de alta precisão assistida por IA. Nossa tecnologia elimina o erro humano na leitura de notas, recibos e extratos.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="manifesto">
+        <div class="container">
+            <span class="label reveal" style="color: var(--accent-red);">Autoridade</span>
+            <div class="manifesto-text reveal">
+                "O maior custo de uma empresa <span style="color: var(--accent-red)">não é o imposto</span>, é a decisão errada tomada por falta de dados."
+            </div>
+            <p class="reveal" style="color: var(--text-dim); margin-top: 2rem; max-width: 700px; font-size: 18px;">
+                O Lumen Fiscal nasceu para eliminar o "acho que posso" e substituir pelo "eu sei que devo". Somos a inteligência que antecipa o risco antes que o mês acabe.
+            </p>
+        </div>
+    </section>
+
+    <section class="container">
+        <span class="label reveal" style="color: var(--lumen-cyan);">Diagnóstico Rápido</span>
+        <h2 class="reveal" style="font-size: 36px; margin-bottom: 1rem;">O Lumen Fiscal é para você?</h2>
+        <p class="reveal" style="color: var(--text-dim); margin-bottom: 2rem; max-width: 600px;">
+            Se você se identifica com as situações abaixo, o seu negócio está pronto para evoluir para a inteligência de comando.
+        </p>
+
+        <div class="bento-grid">
+            <div class="bento-item item-half reveal bento-glow" style="padding: 2.5rem;">
+                <div>
+                    <span class="label" style="color: var(--text-dim)">O Gargalo do Tempo</span>
+                    <p style="color: var(--text-main); font-size: 18px; line-height: 1.6; font-weight: 500;">
+                        Você frequentemente precisa <span style="color: var(--lumen-cyan);">adiar decisões importantes</span> porque tem que esperar o fechamento do mês ou a resposta do contador para saber a realidade do seu caixa?
+                    </p>
+                </div>
+            </div>
+
+            <div class="bento-item item-half reveal bento-glow" style="padding: 2.5rem;">
+                <div>
+                    <span class="label" style="color: var(--text-dim)">A Dor da Incerteza</span>
+                    <p style="color: var(--text-main); font-size: 18px; line-height: 1.6; font-weight: 500;">
+                        Você se sente inseguro ao decidir sobre uma <span style="color: var(--lumen-cyan);">nova contratação ou investimento</span> por não ter clareza imediata de como isso impactará seu lucro nos próximos meses?
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container" style="padding-bottom: 8rem; text-align: center;">
+        <div class="bento-item reveal bento-glow" style="margin-top: 1rem; padding: 4rem 2rem; border-color: var(--lumen-cyan-dim);">
+            <h2 style="font-size: 32px; margin-bottom: 1rem;">Pronto para o Próximo Nível?</h2>
+            <p style="color: var(--text-dim); margin-bottom: 2.5rem;">Agende uma demonstração técnica com um de nossos especialistas e recupere o controle do seu negócio.</p>
+            <div class="magnetic-wrapper" style="max-width: 400px; margin: 0 auto; width: 100%;">
+                <a href="https://wa.me/92981143505" class="btn-primary magnetic-btn">Falar com um Especialista</a>
+            </div>
+        </div>
+        
+        <div style="margin-top: 4rem; opacity: 0.2; font-size: 10px; letter-spacing: 2px;">
+            LUMEN DEV STUDIOS © 2026 | INTELIGÊNCIA FISCAL
+        </div>
+    </section>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 1. ANIMAÇÕES DE REVEAL (Fade in/up)
+        const revealElements = document.querySelectorAll('.reveal');
+        revealElements.forEach((el) => {
+            gsap.to(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: "top 85%", 
+                    toggleActions: "play none none none"
+                },
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: "power2.out"
+            });
+        });
+
+        // 2. CONTADOR DINÂMICO (Acurácia)
+        const acuraciaEl = document.getElementById("counter-acuracia");
+        if(acuraciaEl) {
+            gsap.to({ val: 0 }, {
+                val: 99,
+                duration: 2,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: acuraciaEl,
+                    start: "top 85%", 
+                },
+                onUpdate: function() {
+                    acuraciaEl.innerText = Math.floor(this.targets()[0].val) + "%";
+                }
+            });
+        }
+
+        // 3. BACKGROUND ANIMADO (Linhas Neon)
+        gsap.to(".neon-line", {
+            strokeDasharray: "10, 50",
+            strokeDashoffset: -500,
+            duration: 20,
+            repeat: -1,
+            ease: "none"
+        });
+        window.addEventListener('scroll', () => {
+            gsap.to("#neon-canvas", { y: window.pageYOffset * 0.1, duration: 0.5 });
+        });
+
+        // ==========================================
+        // INTERAÇÕES RESTRITAS AO DESKTOP
+        // ==========================================
+        if (window.matchMedia("(pointer: fine)").matches) {
+            
+            const bentoCards = document.querySelectorAll('.bento-glow');
+            bentoCards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                });
+            });
+
+            const magneticWrappers = document.querySelectorAll('.magnetic-wrapper');
+            magneticWrappers.forEach(wrapper => {
+                const btn = wrapper.querySelector('.magnetic-btn');
+                
+                wrapper.addEventListener('mousemove', (e) => {
+                    const rect = wrapper.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    
+                    const distanceX = e.clientX - centerX;
+                    const distanceY = e.clientY - centerY;
+                    
+                    gsap.to(btn, {
+                        x: distanceX * 0.25,
+                        y: distanceY * 0.25,
+                        duration: 0.3,
+                        ease: "power2.out"
+                    });
+                });
+
+                wrapper.addEventListener('mouseleave', () => {
+                    gsap.to(btn, {
+                        x: 0,
+                        y: 0,
+                        duration: 0.6,
+                        ease: "elastic.out(1, 0.3)"
+                    });
+                });
+            });
+        }
+    </script>
+</body>
+</html>
