@@ -7,8 +7,10 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
     
+    <!-- Bibliotecas de Animação e Scroll Suave -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
     
     <style>
         :root {
@@ -29,6 +31,11 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
+        }
+
+        /* Lenis necessita que o html não tenha scroll-behavior: smooth nativo */
+        html {
+            scroll-behavior: initial;
         }
 
         html, body {
@@ -71,6 +78,8 @@
             max-width: 1100px;
             margin: 0 auto;
             padding: 0 1.5rem;
+            position: relative;
+            z-index: 10;
         }
 
         section {
@@ -209,7 +218,6 @@
             background-position: center;
             background-repeat: no-repeat;
             z-index: 1;
-            /* Leve sombra na imagem em si para destacar da luz de fundo */
             filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
         }
 
@@ -361,7 +369,6 @@
                 <img src="3.svg" alt="3.svg" class="floating-bubble bubble-3">
                 <img src="4.svg" alt="4.svg" class="floating-bubble bubble-4">
                 
-                <!-- Alterado para .svg -->
                 <img src="medica.svg" alt="Médica e Empreendedora Satisfeita usando Lumen Fiscal" class="hero-center-img">
                 
                 <div class="hero-cta-overlap">
@@ -390,7 +397,6 @@
                     </p>
                 </div>
                 <div class="mockup-wrapper" style="padding: 0; overflow: hidden;">
-                    <!-- Alterado para .svg e ocupando 100% sem padding -->
                     <div class="mockup-bg" style="background-image: url('decidacomluz.svg'); background-size: cover; filter: none;"></div>
                 </div>
             </div>
@@ -403,8 +409,7 @@
                         Sem planilhas. Envie fotos ou arquivos e receba o veredito em minutos.
                     </p>
                 </div>
-                <div class="mockup-wrapper" style="aspect-ratio: 9/12;">
-                    <!-- Mantido .svg -->
+                <div class="mockup-wrapper" style="aspect-ratio: 9/16; padding: 1.5rem;">
                     <div class="mockup-bg" style="background-image: url('financeironowhatsapp.svg');"></div>
                 </div>
             </div>
@@ -418,14 +423,12 @@
                     </p>
                 </div>
                 <div class="mockup-wrapper" style="padding: 0; overflow: hidden;">
-                    <!-- Alterado para .svg e ocupando 100% sem padding -->
                     <div class="mockup-bg" style="background-image: url('simuladordecenarios.svg'); background-size: cover; filter: none;"></div>
                 </div>
             </div>
 
             <div class="bento-item item-large reveal bento-glow" style="padding: 0; min-height: 380px; border-color: var(--lumen-cyan-dim); position: relative;">
                 
-                <!-- Alterado para .svg -->
                 <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('acuraciatecnica.svg'); background-size: contain; background-position: right center; background-repeat: no-repeat; opacity: 0.6; z-index: 0;"></div>
                 
                 <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, rgba(10,10,10,1) 0%, rgba(10,10,10,0.8) 50%, transparent 100%); z-index: 1;"></div>
@@ -483,7 +486,7 @@
     </section>
 
     <section class="container" style="padding-bottom: 8rem; text-align: center;">
-        <div class="bento-item reveal bento-glow" style="padding: 4rem 2rem; border-color: var(--lumen-cyan-dim);">
+        <div class="bento-item reveal bento-glow" style="margin-top: 1rem; padding: 4rem 2rem; border-color: var(--lumen-cyan-dim);">
             <h2 style="font-size: 32px; margin-bottom: 1rem;">Pronto para o Próximo Nível?</h2>
             <p style="color: var(--text-dim); margin-bottom: 2.5rem;">Agende uma demonstração técnica com um de nossos especialistas e recupere o controle do seu negócio.</p>
             <div style="max-width: 400px; margin: 0 auto; width: 100%; display: flex; justify-content: center;">
@@ -499,6 +502,25 @@
     </section>
 
     <script>
+        // Inicializar Scroll Suave (Lenis)
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false, // Mantém o scroll natural em telas touch
+            touchMultiplier: 2,
+        });
+
+        // Sincronizar Lenis com ScrollTrigger
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time)=>{
+            lenis.raf(time * 1000);
+        });
+        gsap.ticker.lagSmoothing(0);
+
         gsap.registerPlugin(ScrollTrigger);
 
         // 1. ANIMAÇÕES DE REVEAL (Fade in/up)
@@ -542,6 +564,7 @@
             repeat: -1,
             ease: "none"
         });
+        
         window.addEventListener('scroll', () => {
             gsap.to("#neon-canvas", { y: window.pageYOffset * 0.1, duration: 0.5 });
         });
