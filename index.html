@@ -31,11 +31,12 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        body {
+        html, body {
             background-color: var(--bg-pure);
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
+            width: 100%;
             line-height: 1.5;
         }
 
@@ -151,9 +152,7 @@
 
         .magnetic-wrapper {
             display: inline-block;
-            padding: 20px;
-            margin: -20px;
-            width: calc(100% + 40px);
+            width: 100%;
         }
 
         .btn-primary {
@@ -180,11 +179,16 @@
                 filter: brightness(1.1);
                 box-shadow: 0 10px 25px rgba(6, 182, 212, 0.2);
             }
+
+            .magnetic-wrapper {
+                padding: 20px;
+                margin: -20px;
+                width: calc(100% + 40px);
+            }
         }
 
         /* --- Sistema de Imagens (Com Luz de Fundo Integrada) --- */
         .mockup-wrapper {
-            /* Alterado de #000 para um gradiente radial iluminado */
             background: radial-gradient(circle at center, rgba(6, 182, 212, 0.2) 0%, rgba(0, 0, 0, 1) 75%);
             border: 1px solid var(--border-subtle);
             border-radius: 8px;
@@ -195,7 +199,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1.5rem; /* Padding mantido para garantir respiro nas bordas */
+            padding: 1.5rem; /* Padding mantido para garantir respiro nas bordas (onde houver) */
         }
 
         .mockup-bg {
@@ -275,20 +279,21 @@
         }
 
         /* Ajuste de Posição dos Balões */
-        .bubble-1 { top: 10%; left: -5%; width: 40%; }
-        .bubble-2 { top: 22%; right: -8%; width: 36%; z-index: 4; }
-        .bubble-3 { bottom: 28%; left: -22%; width: 34%; z-index: 4; }
-        .bubble-4 { bottom: 12%; right: -25%; width: 38%; z-index: 4; }
+        .bubble-1 { top: 10%; left: -5%; width: 38%; }
+        .bubble-2 { top: 22%; right: -5%; width: 34%; z-index: 4; }
+        .bubble-3 { bottom: 28%; left: -10%; width: 32%; z-index: 4; }
+        .bubble-4 { bottom: 18%; right: -10%; width: 36%; z-index: 4; }
 
         @media (max-width: 768px) {
             .hero-composition { margin-top: 2rem; margin-bottom: 6rem; }
             .hero-image-wrapper { max-width: 360px; }
             .hero-glow { width: 160%; background: radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, transparent 65%); }
             
-            .bubble-1 { top: 2%; left: -2%; width: 42%; }
-            .bubble-2 { top: 18%; right: -4%; width: 40%; }
-            .bubble-3 { bottom: 30%; left: -15%; width: 38%; z-index: 4; }
-            .bubble-4 { bottom: 10%; right: -18%; width: 42%; z-index: 4; }
+            /* Posições seguras e zeradas no mobile para não estourar a tela */
+            .bubble-1 { top: 5%; left: 0%; width: 35%; }
+            .bubble-2 { top: 18%; right: 0%; width: 32%; }
+            .bubble-3 { bottom: 32%; left: 0%; width: 33%; z-index: 4; }
+            .bubble-4 { bottom: 20%; right: 0%; width: 35%; z-index: 4; }
         }
 
         .hero-cta-overlap {
@@ -297,9 +302,11 @@
             left: 50%;
             transform: translate(-50%, 50%); 
             z-index: 10;
-            width: 75%; 
+            width: 90%; 
             max-width: 320px; 
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         /* --- Specific Section Styles --- */
@@ -359,7 +366,7 @@
                 
                 <div class="hero-cta-overlap">
                     <div class="magnetic-wrapper">
-                        <a href="https://wa.me/SEUNUMERO" class="btn-primary magnetic-btn">Agendar uma Demonstração</a>
+                        <a href="https://wa.me/5592981143505" class="btn-primary magnetic-btn">Agendar uma Demonstração</a>
                     </div>
                 </div>
             </div>
@@ -476,11 +483,13 @@
     </section>
 
     <section class="container" style="padding-bottom: 8rem; text-align: center;">
-        <div class="bento-item reveal bento-glow" style="margin-top: 1rem; padding: 4rem 2rem; border-color: var(--lumen-cyan-dim);">
+        <div class="bento-item reveal bento-glow" style="padding: 4rem 2rem; border-color: var(--lumen-cyan-dim);">
             <h2 style="font-size: 32px; margin-bottom: 1rem;">Pronto para o Próximo Nível?</h2>
             <p style="color: var(--text-dim); margin-bottom: 2.5rem;">Agende uma demonstração técnica com um de nossos especialistas e recupere o controle do seu negócio.</p>
-            <div class="magnetic-wrapper" style="max-width: 400px; margin: 0 auto; width: 100%;">
-                <a href="https://wa.me/92981143505" class="btn-primary magnetic-btn">Falar com um Especialista</a>
+            <div style="max-width: 400px; margin: 0 auto; width: 100%; display: flex; justify-content: center;">
+                <div class="magnetic-wrapper">
+                    <a href="https://wa.me/5592981143505" class="btn-primary magnetic-btn">Falar com um Especialista</a>
+                </div>
             </div>
         </div>
         
